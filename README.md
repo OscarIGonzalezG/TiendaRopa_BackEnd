@@ -181,3 +181,21 @@ Campos:
 - role
 - token (usar en headers como Authorization: Bearer {token})
 
+🔐 Autenticación con JWT
+
+- El cliente obtiene un JWT con `/api/auth/login`.
+- Debe enviar ese token en cada request:
+  Header → Authorization: Bearer {token}
+- Las rutas se protegen por rol usando `.hasAuthority("ROL")`.
+
+Ejemplo:
+- Solo ADMIN puede acceder a `/api/users`
+
+
+🔒 Rutas protegidas por rol
+
+- /api/auth/** → acceso libre
+- /api/users/** → solo ADMIN
+- /api/vendedor/** → solo VENDEDOR
+
+Cada usuario recibe un token JWT con su `role`, el cual debe enviarse en cada petición.
