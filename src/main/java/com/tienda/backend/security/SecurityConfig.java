@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll() // login permitido
                         .requestMatchers("/api/users/**").hasAuthority("ADMIN") // Solo ADMIN
                         .requestMatchers("/api/vendedor/**").hasAuthority("VENDEDOR") // Solo VENDEDOR
+                        .requestMatchers("/api/productos/**").permitAll() // ← acceso libre.
                         .anyRequest().authenticated()// otras rutas requieren login
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,42 +1,46 @@
-# 🏍️ Tienda Online - Backend API
+# 🛒 Tienda Online - Backend API
 
-Este proyecto es una API RESTful para una tienda de ropa, desarrollada con **Java Spring Boot**. Permite registrar usuarios, autenticarse con JWT, gestionar productos y controlar accesos por rol: `ADMIN`, `VENDEDOR`, `CLIENTE`.
+Este proyecto es una API RESTful para una tienda de ropa online, desarrollada en **Java con Spring Boot**. Su propósito es simular una plataforma real donde se pueden registrar usuarios, gestionar productos, controlar el acceso según roles y preparar pedidos.
+
+Ideal como parte de un portafolio técnico, ya que refleja buenas prácticas de seguridad, estructura escalable y separación de responsabilidades.
 
 ---
 
-## 🚀 Tecnologías usadas
+## 🚀 Tecnologías utilizadas
 
 - Java 17
 - Spring Boot 3
-- Spring Security
-- JWT (Json Web Token)
+- Spring Security + JWT
 - PostgreSQL
 - Lombok
 - Maven
 
 ---
 
-## ⚙️ Requisitos previos
+## 📐 Roles definidos
 
-- Java 17+
-- PostgreSQL 14+
-- Maven
-
----
-
-## 🧹 Estructura de roles
-
-| Rol      | Permisos principales |
-| -------- | -------------------- |
-| ADMIN    | Gestión de usuarios  |
-| VENDEDOR | Gestión de productos |
-| CLIENTE  | (por implementar)    |
+| Rol      | Permisos principales               |
+|----------|------------------------------------|
+| `ADMIN`    | Crear y listar usuarios             |
+| `VENDEDOR` | CRUD de productos (crear, editar, eliminar) |
+| `CLIENTE`  | Visualizar productos y realizar compras (en desarrollo) |
 
 ---
 
-## 📦 Endpoints disponibles
+## 🧪 Funcionalidades principales
 
-### 🔐 Autenticación (JWT)
+✅ Autenticación con JWT  
+✅ Gestión de usuarios y roles  
+✅ Encriptación de contraseñas con BCrypt  
+✅ CRUD de productos  
+✅ Protección de rutas con autorización por rol  
+⏳ Carrito y pedidos (en desarrollo)
+
+---
+
+## 🔐 Autenticación con JWT
+
+**Login:**
 
 ```http
 POST /api/auth/login
@@ -62,18 +66,17 @@ POST /api/auth/login
 }
 ```
 
-> El token debe usarse en futuras peticiones como: `Authorization: Bearer {token}`
+> Usa el token en futuras peticiones como:
+```
+Authorization: Bearer {token}
+```
 
 ---
 
-### 👤 Gestión de usuarios (solo `ADMIN`)
+## 👥 Gestión de usuarios (ADMIN)
 
-```http
-GET /api/users
-POST /api/users
-```
-
-**Ejemplo de creación de usuario:**
+- Listar usuarios: `GET /api/users`
+- Crear usuario: `POST /api/users`
 
 ```json
 {
@@ -86,7 +89,7 @@ POST /api/users
 
 ---
 
-### 📟 Gestión de productos (solo `VENDEDOR`)
+## 📦 Gestión de productos (VENDEDOR)
 
 ```http
 GET    /api/vendedor/productos
@@ -96,7 +99,7 @@ GET    /api/vendedor/productos/{id}
 DELETE /api/vendedor/productos/{id}
 ```
 
-**Ejemplo de creación de producto:**
+**Ejemplo:**
 
 ```json
 {
@@ -109,50 +112,45 @@ DELETE /api/vendedor/productos/{id}
 
 ---
 
-## 🧰 Probar con Postman
+## 🛍️ Visualización de productos (CLIENTE - acceso público)
 
-1. Realiza `POST /api/auth/login` con credenciales válidas.
-2. Copia el token de respuesta.
-3. Usa el token en el header `Authorization: Bearer {token}` para las siguientes rutas.
-
----
-
-## 🔒 Seguridad y roles
-
-La seguridad se gestiona con Spring Security y JWT. Las rutas están protegidas por roles:
-
-```java
-"/api/auth/**"             -> acceso libre
-"/api/users/**"            -> solo ADMIN
-"/api/vendedor/**"         -> solo VENDEDOR
+```http
+GET /api/productos
+GET /api/productos/{id}
 ```
 
 ---
 
-## 📌 Estado actual
+## 🔒 Seguridad
 
+Se utiliza Spring Security con JWT. Las rutas están protegidas de acuerdo al rol:
 
-✅ Registro y login de usuarios
+```java
+/api/auth/**          -> público
+/api/users/**         -> ADMIN
+/api/vendedor/**      -> VENDEDOR
+/api/productos/**     -> público (lectura)
+```
 
-✅ Encriptación de contraseñas (BCrypt)
-
-✅ Generación de tokens JWT
-
-✅ Protección de rutas por rol
-
-✅ CRUD de productos para vendedores
-
-⏳ Gestión de clientes (en desarrollo)
-
-⏳ Carrito de compras y pagos (próximamente)
-
+El token se valida en cada petición y se interpreta para otorgar permisos por rol.
 
 ---
 
-## 🛠️ Cómo correr el proyecto
+## 🧰 Prueba con Postman o Thunder Client
 
-1. Clona el repositorio.
-2. Configura tu conexión PostgreSQL en `application.properties`:
+1. Login → recibe el token
+2. Usa el token en el header:
+```
+Authorization: Bearer {token}
+```
+3. Accede a rutas protegidas según el rol
+
+---
+
+## ⚙️ Cómo ejecutar el proyecto
+
+1. Clona este repositorio.
+2. Configura tu PostgreSQL en `application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/tienda_db
@@ -160,18 +158,31 @@ spring.datasource.username=tu_usuario
 spring.datasource.password=tu_password
 ```
 
-3. Ejecuta:
+3. Ejecuta el proyecto:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-El backend estará disponible en `http://localhost:8080`
+El backend estará disponible en:
+```
+http://localhost:8080
+```
+
+---
+
+## 📌 Estado actual
+
+| Módulo                 | Estado        |
+|------------------------|---------------|
+| Autenticación JWT      | ✅ Completo    |
+| Gestión de usuarios    | ✅ Completo    |
+| Gestión de productos   | ✅ Completo    |
+| Visualización pública  | ✅ Completo    |
+| Pedidos y carrito      | 🔄 En desarrollo |
 
 ---
 
 ## 📚 Licencia
 
-Este proyecto está en desarrollo para fines educativos y portafolio personal.
-
----
+Este proyecto está creado con fines educativos y como parte del portafolio profesional de **Oscar González**.
