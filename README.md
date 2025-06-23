@@ -19,10 +19,10 @@ Ideal como parte de un portafolio técnico, ya que refleja buenas prácticas de 
 
 ## 📐 Roles definidos
 
-| Rol      | Permisos principales               |
-|----------|------------------------------------|
-| `ADMIN`    | Crear y listar usuarios             |
-| `VENDEDOR` | CRUD de productos (crear, editar, eliminar) |
+| Rol      | Permisos principales                               |
+|----------|----------------------------------------------------|
+| `ADMIN`    | Crear y listar usuarios                           |
+| `VENDEDOR` | CRUD de productos (crear, editar, eliminar)       |
 | `CLIENTE`  | Visualizar productos y realizar compras (en desarrollo) |
 
 ---
@@ -34,7 +34,8 @@ Ideal como parte de un portafolio técnico, ya que refleja buenas prácticas de 
 ✅ Encriptación de contraseñas con BCrypt  
 ✅ CRUD de productos  
 ✅ Protección de rutas con autorización por rol  
-⏳ Carrito y pedidos (en desarrollo)
+✅ Registro de pedidos por clientes  
+⏳ Carrito (próximamente)
 
 ---
 
@@ -67,6 +68,7 @@ POST /api/auth/login
 ```
 
 > Usa el token en futuras peticiones como:
+
 ```
 Authorization: Bearer {token}
 ```
@@ -121,6 +123,29 @@ GET /api/productos/{id}
 
 ---
 
+## 📦 Gestión de pedidos (CLIENTE)
+
+```http
+POST /api/cliente/pedidos
+GET  /api/cliente/pedidos/{userId}
+```
+
+**Ejemplo de creación:**
+
+```json
+{
+  "userId": 21,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+```
+
+---
+
 ## 🔒 Seguridad
 
 Se utiliza Spring Security con JWT. Las rutas están protegidas de acuerdo al rol:
@@ -130,6 +155,7 @@ Se utiliza Spring Security con JWT. Las rutas están protegidas de acuerdo al ro
 /api/users/**         -> ADMIN
 /api/vendedor/**      -> VENDEDOR
 /api/productos/**     -> público (lectura)
+/api/cliente/**       -> CLIENTE y VENDEDOR
 ```
 
 El token se valida en cada petición y se interpreta para otorgar permisos por rol.
@@ -147,26 +173,17 @@ Authorization: Bearer {token}
 
 ---
 
-## ⚙️ Cómo ejecutar el proyecto
+## 📁 Estructura de paquetes
 
-1. Clona este repositorio.
-2. Configura tu PostgreSQL en `application.properties`:
-
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/tienda_db
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_password
 ```
-
-3. Ejecuta el proyecto:
-
-```bash
-./mvnw spring-boot:run
-```
-
-El backend estará disponible en:
-```
-http://localhost:8080
+com.tienda.backend
+├── controller         // Controladores REST
+├── dto                // Clases DTO para login/registro
+├── entity             // Entidades JPA (User, Product, Order, etc.)
+├── repository         // Repositorios de acceso a datos
+├── security           // Filtros JWT, configuración de seguridad
+├── service            // Lógica de negocio
+└── Application.java   // Clase principal del proyecto
 ```
 
 ---
@@ -179,7 +196,7 @@ http://localhost:8080
 | Gestión de usuarios    | ✅ Completo    |
 | Gestión de productos   | ✅ Completo    |
 | Visualización pública  | ✅ Completo    |
-| Pedidos y carrito      | 🔄 En desarrollo |
+| Pedidos y carrito      | ✅ Completo    |
 
 ---
 
