@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.IOException;
 import java.security.Key;
@@ -39,10 +40,16 @@ public class JwtFilter extends OncePerRequestFilter{
                 String email = claims.getSubject();
                 String role = claims.get("role", String.class);
 
+                // Imprimir para debugging
+                System.out.println("🔑 Email: " + email);
+                System.out.println("🔐 Rol extraído: " + role);
+                System.out.println("🔒 Authorities asignadas: " + List.of(new SimpleGrantedAuthority(role)));
+
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         email,
                         null,
-                        List.of(() -> role) // Rol como autoridad
+                        List.of(new SimpleGrantedAuthority(role)) // Rol como autoridad
                 );
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

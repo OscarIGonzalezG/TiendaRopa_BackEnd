@@ -1,5 +1,8 @@
 package com.tienda.backend.entity;
 
+import java.math.BigDecimal;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,4 +34,8 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items;
+
+    @Column(nullable = false)
+    private BigDecimal total;
+
 }

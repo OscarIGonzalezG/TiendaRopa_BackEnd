@@ -43,10 +43,18 @@ public class AuthController {
 
         User user = userOptional.get();
 
+        System.out.println("🔐 DEBUG LOGIN:");
+        System.out.println("➡ Email ingresado: " + request.getEmail());
+        System.out.println("➡ Contraseña ingresada: " + request.getPassword());
+        System.out.println("➡ Contraseña en base de datos: " + user.getPassword());
+        System.out.println("➡ Coincide?: " + passwordEncoder.matches(request.getPassword(), user.getPassword()));
+
         // Validar la contraseña con BCrypt
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             return ResponseEntity.badRequest().body("Error: Contraseña incorrecta");
         }
+
+
 
         // Sí pasa ambas validaciones, retornar los datos básicos (sin password), Validación menos estructurada y solo de pruebas.
         //return ResponseEntity.ok("Login exitoso: " + user.getName() + " (" + user.getRole() + ")");
@@ -63,5 +71,7 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(response);
+
+
     }
 }

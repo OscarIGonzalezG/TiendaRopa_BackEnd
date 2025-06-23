@@ -27,15 +27,16 @@ public class SecurityConfig {
         return http
                 .csrf(csrf ->csrf.disable())  // Desactiva protección CSRF (solo para desarrollo)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // login permitido
+                        .requestMatchers("/api/auth/**").permitAll() // Login libre
                         .requestMatchers("/api/users/**").hasAuthority("ADMIN") // Solo ADMIN
                         .requestMatchers("/api/vendedor/**").hasAuthority("VENDEDOR") // Solo VENDEDOR
-                        .requestMatchers("/api/productos/**").permitAll() // ← acceso libre.
-                        .anyRequest().authenticated()// otras rutas requieren login
+                        .requestMatchers("/api/productos/**").permitAll() // Productos públicos
+                        .requestMatchers("/api/cliente/**").hasAnyAuthority("CLIENTE", "VENDEDOR") // Cliente y Vendedor
+                        .anyRequest().authenticated() // Todo lo demás requiere login
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-        // return http.build();
+
     }
     // Been que permite encriptar contraseñas con BCrypt
     @Bean

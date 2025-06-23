@@ -2,6 +2,7 @@ package com.tienda.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "order_items")
@@ -26,4 +27,7 @@ public class OrderItem {
     private Order order;
 
     private int quantity;
+
+    @Column(nullable = false)
+    private BigDecimal price;
 }
