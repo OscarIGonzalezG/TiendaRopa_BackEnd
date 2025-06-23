@@ -196,7 +196,8 @@ com.tienda.backend
 | Gestión de usuarios    | ✅ Completo    |
 | Gestión de productos   | ✅ Completo    |
 | Visualización pública  | ✅ Completo    |
-| Pedidos y carrito      | ✅ Completo    |
+| Pedidos                | ✅ Completo    |
+| Carrito                | ⏳ Próximamente |
 
 ---
 
