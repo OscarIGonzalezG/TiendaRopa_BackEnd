@@ -4,6 +4,7 @@ import com.tienda.backend.entity.User;
 import com.tienda.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component // Spring la detecta y ejecuta automáticamente
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class DataLoader  implements CommandLineRunner{
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception{
@@ -22,28 +24,28 @@ public class DataLoader  implements CommandLineRunner{
         User admin1 = User.builder()
                 .name("Admin Principal")
                 .email("admin1@tienda.com")
-                .password("123456") // luego encriptaremos esto
+                .password(passwordEncoder.encode("123456")) // luego encriptaremos esto
                 .role("ADMIN")
                 .build();
 
         User admin2 = User.builder()
                 .name("Admin Secundario")
                 .email("admin2@tienda.com")
-                .password("123456")
+                .password(passwordEncoder.encode("123456"))
                 .role("ADMIN")
                 .build();
 
         User vendedor1 = User.builder()
                 .name("Vendedor Uno")
                 .email("vendedor1@tienda.com")
-                .password("123456")
+                .password(passwordEncoder.encode("123456"))
                 .role("VENDEDOR")
                 .build();
 
         User vendedor2 = User.builder()
                 .name("Vendedora Dos")
                 .email("vendedora2@tienda.com")
-                .password("123456")
+                .password(passwordEncoder.encode("123456"))
                 .role("VENDEDOR")
                 .build();
 
