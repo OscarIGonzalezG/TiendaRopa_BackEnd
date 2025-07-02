@@ -39,15 +39,24 @@ Ideal como parte de un portafolio técnico, ya que refleja buenas prácticas de 
 
 ---
 
-## 🔐 Autenticación con JWT
+## 📌 URL base (Deploy)
 
-**Login:**
-
-```http
-POST /api/auth/login
+```plaintext
+https://tu-dominio-o-ip/api
 ```
 
-**Body:**
+> Reemplaza `https://tu-dominio-o-ip` con la URL o IP real de tu backend desplegado.
+
+
+---
+
+## 🔐 Autenticación con JWT
+
+### Login
+
+**POST** `/api/auth/login`
+
+**Body (JSON):**
 
 ```json
 {
@@ -56,7 +65,7 @@ POST /api/auth/login
 }
 ```
 
-**Respuesta:**
+**Respuesta exitosa:**
 
 ```json
 {
@@ -67,7 +76,9 @@ POST /api/auth/login
 }
 ```
 
-> Usa el token en futuras peticiones como:
+### Uso del token
+
+Para acceder a rutas protegidas, agrega el siguiente header en tus peticiones:
 
 ```
 Authorization: Bearer {token}
@@ -75,33 +86,38 @@ Authorization: Bearer {token}
 
 ---
 
-## 👥 Gestión de usuarios (ADMIN)
+## 👥 Gestión de usuarios (Solo ADMIN)
 
-- Listar usuarios: `GET /api/users`
-- Crear usuario: `POST /api/users`
+- **Listar usuarios:**  
+  `GET /api/users`  
 
-```json
-{
-  "name": "Vendedor 1",
-  "email": "vendedor1@tienda.com",
-  "password": "123456",
-  "role": "VENDEDOR"
-}
-```
+- **Crear usuario:**  
+  `POST /api/users`  
+
+  **Body ejemplo:**
+
+  ```json
+  {
+    "name": "Vendedor 1",
+    "email": "vendedor1@tienda.com",
+    "password": "123456",
+    "role": "VENDEDOR"
+  }
+  ```
 
 ---
 
-## 📦 Gestión de productos (VENDEDOR)
+## 📦 Gestión de productos (Solo VENDEDOR)
 
-```http
-GET    /api/vendedor/productos
-POST   /api/vendedor/productos
-PUT    /api/vendedor/productos
-GET    /api/vendedor/productos/{id}
-DELETE /api/vendedor/productos/{id}
-```
+| Método | Ruta                          | Descripción               |
+|--------|-------------------------------|--------------------------|
+| GET    | `/api/vendedor/productos`      | Listar productos         |
+| POST   | `/api/vendedor/productos`      | Crear nuevo producto     |
+| PUT    | `/api/vendedor/productos`      | Actualizar producto      |
+| GET    | `/api/vendedor/productos/{id}` | Obtener producto por id  |
+| DELETE | `/api/vendedor/productos/{id}` | Eliminar producto        |
 
-**Ejemplo:**
+**Ejemplo de producto (JSON):**
 
 ```json
 {
@@ -114,90 +130,103 @@ DELETE /api/vendedor/productos/{id}
 
 ---
 
-## 🛍️ Visualización de productos (CLIENTE - acceso público)
+## 🛍️ Visualización de productos (Acceso público)
 
-```http
-GET /api/productos
-GET /api/productos/{id}
-```
+- **Listar productos:**  
+  `GET /api/productos`
 
----
-
-## 📦 Gestión de pedidos (CLIENTE)
-
-```http
-POST /api/cliente/pedidos
-GET  /api/cliente/pedidos/{userId}
-```
-
-**Ejemplo de creación:**
-
-```json
-{
-  "userId": 21,
-  "items": [
-    {
-      "productId": 1,
-      "quantity": 2
-    }
-  ]
-}
-```
+- **Detalle producto:**  
+  `GET /api/productos/{id}`
 
 ---
 
-## 🔒 Seguridad
+## 📦 Gestión de pedidos (Solo CLIENTE)
 
-Se utiliza Spring Security con JWT. Las rutas están protegidas de acuerdo al rol:
+- **Crear pedido:**  
+  `POST /api/cliente/pedidos`
 
-```java
-/api/auth/**          -> público
-/api/users/**         -> ADMIN
-/api/vendedor/**      -> VENDEDOR
-/api/productos/**     -> público (lectura)
-/api/cliente/**       -> CLIENTE y VENDEDOR
-```
+  **Body ejemplo:**
 
-El token se valida en cada petición y se interpreta para otorgar permisos por rol.
+  ```json
+  {
+    "userId": 21,
+    "items": [
+      {
+        "productId": 1,
+        "quantity": 2
+      }
+    ]
+  }
+  ```
+
+- **Listar pedidos de un usuario:**  
+  `GET /api/cliente/pedidos/{userId}`
 
 ---
 
-## 🧰 Prueba con Postman o Thunder Client
+## 🛡️ Seguridad y permisos por roles
 
-1. Login → recibe el token
-2. Usa el token en el header:
+| Ruta                  | Rol requerido          | Acceso                  |
+|-----------------------|-----------------------|-------------------------|
+| `/api/auth/**`        | Público               | Login y registro        |
+| `/api/users/**`       | ADMIN                 | Gestión usuarios        |
+| `/api/vendedor/**`    | VENDEDOR              | CRUD productos          |
+| `/api/productos/**`   | Público (solo lectura) | Ver productos           |
+| `/api/cliente/**`     | CLIENTE y VENDEDOR    | Gestión pedidos         |
+
+---
+
+## 🧪 Prueba con Postman o Thunder Client
+
+1. Haz login con `/api/auth/login` para obtener el token JWT.  
+2. Copia el token recibido.  
+3. En las peticiones a rutas protegidas, agrega el header:  
+
 ```
 Authorization: Bearer {token}
 ```
-3. Accede a rutas protegidas según el rol
+
+4. Realiza las operaciones según el rol asignado.  
 
 ---
 
-## 📁 Estructura de paquetes
+## ❗ Errores comunes
+
+| Código | Descripción                      |
+|--------|---------------------------------|
+| 400    | Solicitud mal formada            |
+| 401    | No autorizado (token inválido)  |
+| 403    | Prohibido (sin permisos)        |
+| 404    | Recurso no encontrado            |
+| 500    | Error interno del servidor       |
+
+---
+
+## 📁 Estructura del proyecto (paquetes)
 
 ```
 com.tienda.backend
-├── controller         // Controladores REST
-├── dto                // Clases DTO para login/registro
-├── entity             // Entidades JPA (User, Product, Order, etc.)
-├── repository         // Repositorios de acceso a datos
-├── security           // Filtros JWT, configuración de seguridad
-├── service            // Lógica de negocio
-└── Application.java   // Clase principal del proyecto
+├── controller    // Controladores REST
+├── dto           // Clases DTO para login, registro, etc.
+├── entity        // Entidades JPA (User, Product, Order...)
+├── repository    // Repositorios de datos
+├── security      // Configuración de seguridad y filtros JWT
+├── service       // Lógica de negocio
+└── Application.java  // Clase principal
 ```
 
 ---
 
-## 📌 Estado actual
+## ⏳ Estado actual del proyecto
 
-| Módulo                 | Estado        |
-|------------------------|---------------|
-| Autenticación JWT      | ✅ Completo    |
-| Gestión de usuarios    | ✅ Completo    |
-| Gestión de productos   | ✅ Completo    |
-| Visualización pública  | ✅ Completo    |
-| Pedidos                | ✅ Completo    |
-| Carrito                | ⏳ Próximamente |
+| Módulo                | Estado          |
+|-----------------------|-----------------|
+| Autenticación JWT     | ✅ Completo      |
+| Gestión de usuarios   | ✅ Completo      |
+| Gestión de productos  | ✅ Completo      |
+| Visualización pública | ✅ Completo      |
+| Pedidos               | ✅ Completo      |
+| Carrito               | ⏳ Próximamente  |
 
 ---
 
